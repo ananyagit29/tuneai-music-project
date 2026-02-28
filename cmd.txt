@@ -1,2 +1,3 @@
+cd tuneai-music-project
 frontend : npm run dev 
 backend : npx nodemon index.js
