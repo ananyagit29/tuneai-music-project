@@ -1,1 +1,2 @@
-npm run dev 
+frontend : npm run dev 
+backend : npx nodemon index.js

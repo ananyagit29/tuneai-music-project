@@ -1,56 +1,82 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import './Auth.css';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from 'axios';
 
 function Signup() {
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        try {
-            const response = await fetch('http://localhost:3001/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, email, password })
-            });
-            
-            const data = await response.json();
-            if (response.ok) {
-                alert('Registration Successful! Please Login.');
+        axios.post('http://localhost:3001/register', { name, email, password })
+            .then(result => {
+                console.log(result);
+                // On successful registration, redirect to login
                 navigate('/login');
-            } else {
-                alert(data.error);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    };
+            })
+            .catch(err => {
+                console.log(err);
+                if (err.response && err.response.data && err.response.data.error) {
+                    alert(err.response.data.error);
+                } else {
+                    alert("Registration failed. Please try again.");
+                }
+            });
+    }
 
     return (
-        <div className="auth-container">
-            <div className="auth-form">
-                <h2>Sign Up</h2>
+        <div className="d-flex justify-content-center align-items-center bg-secondary vh-100">
+            <div className="bg-white p-3 rounded w-25">
+                <h2>Register</h2>
                 <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label>Name</label>
-                        <input type="text" placeholder="Enter Name" onChange={(e) => setName(e.target.value)} required />
+                    <div className="mb-3">
+                        <label htmlFor="name">
+                            <strong>Name</strong>
+                        </label>
+                        <input
+                            type="text"
+                            placeholder="Enter Name"
+                            autoComplete="off"
+                            name="name"
+                            className="form-control rounded-0"
+                            onChange={(e) => setName(e.target.value)}
+                        />
                     </div>
-                    <div className="form-group">
-                        <label>Email</label>
-                        <input type="email" placeholder="Enter Email" onChange={(e) => setEmail(e.target.value)} required />
+                    <div className="mb-3">
+                        <label htmlFor="email">
+                            <strong>Email</strong>
+                        </label>
+                        <input
+                            type="email"
+                            placeholder="Enter Email"
+                            autoComplete="off"
+                            name="email"
+                            className="form-control rounded-0"
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
                     </div>
-                    <div className="form-group">
-                        <label>Password</label>
-                        <input type="password" placeholder="Enter Password" onChange={(e) => setPassword(e.target.value)} required />
+                    <div className="mb-3">
+                        <label htmlFor="password">
+                            <strong>Password</strong>
+                        </label>
+                        <input
+                            type="password"
+                            placeholder="Enter Password"
+                            name="password"
+                            className="form-control rounded-0"
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
                     </div>
-                    <button type="submit" className="btn-primary">Register</button>
+                    <button type="submit" className="btn btn-success w-100 rounded-0">
+                        Register
+                    </button>
                 </form>
-                <p className="toggle-text">
-                    Already have an account? <Link to="/login">Login</Link>
-                </p>
+                <p>Already Have an Account</p>
+                <Link to="/login" className="btn btn-default border w-100 bg-light rounded-0 text-decoration-none">
+                    Login
+                </Link>
             </div>
         </div>
     );
